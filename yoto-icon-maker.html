@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yoto Icon Maker</title>
+<style>
+  :root{
+    --bg:#FFF3E2;        /* warm cream */
+    --panel:#FFFFFF;     /* white cards */
+    --panel2:#FFF1DF;    /* soft cream control bg */
+    --ink:#2B2A4C;       /* deep indigo text */
+    --muted:#8A87A8;
+    --coral:#F5544A;     /* Yoto coral/red */
+    --teal:#13B5A6;      /* Yoto teal */
+    --yellow:#FFC247;    /* sunshine accent */
+    --line:#F0E2CC;      /* soft warm border */
+    --shadow:0 10px 30px rgba(95,60,30,.10);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:"Avenir Next","Avenir","Nunito",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    color:var(--ink); min-height:100vh; padding:28px 24px;
+    background:
+      radial-gradient(900px 500px at 8% -8%, #FFE0B8 0%, transparent 55%),
+      radial-gradient(800px 520px at 100% 0%, #CFF1EC 0%, transparent 50%),
+      var(--bg);
+  }
+  h1{font-size:26px;margin:0 0 2px;display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:-.3px}
+  .sub{color:var(--muted);font-size:14px;margin:0 0 22px;font-weight:600}
+  .wrap{max-width:1040px;margin:0 auto}
+  .grid{display:grid;grid-template-columns:1fr 360px;gap:22px}
+  @media(max-width:840px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:var(--shadow)}
+  .drop{
+    border:3px dashed #F1C9A6;border-radius:20px;min-height:220px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;color:var(--muted);cursor:pointer;transition:.18s;gap:8px;padding:20px;
+    background:linear-gradient(180deg,#FFFBF4,#FFF4E6);font-weight:700;
+  }
+  .drop.hot{border-color:var(--coral);background:#FFEFE6;color:var(--ink);transform:scale(1.01)}
+  .drop b{color:var(--ink)}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+  input[type=text]{flex:1;min-width:160px;background:var(--panel2);border:1px solid var(--line);
+    color:var(--ink);padding:11px 13px;border-radius:12px;font-size:13px;font-weight:600}
+  input[type=text]::placeholder{color:#B7A98F}
+  button{
+    background:var(--coral);color:#fff;border:0;padding:12px 16px;border-radius:14px;
+    font-weight:800;cursor:pointer;font-size:13px;font-family:inherit;
+    box-shadow:0 4px 0 #D23E36;transition:.12s;
+  }
+  button:hover{filter:brightness(1.04)}
+  button:active{transform:translateY(2px);box-shadow:0 2px 0 #D23E36}
+  button.ghost{background:#fff;color:var(--ink);border:2px solid var(--line);box-shadow:0 4px 0 var(--line);font-weight:700}
+  button.ghost:active{box-shadow:0 2px 0 var(--line)}
+  button:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;transform:none}
+  .previews{display:flex;gap:22px;align-items:flex-end;justify-content:center;margin:10px 0 4px;flex-wrap:wrap}
+  .pv{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .pv span{font-size:12px;color:var(--muted);font-weight:700}
+  .pv canvas#small{image-rendering:pixelated;border-radius:10px;
+    background:
+      linear-gradient(45deg,#EadFcd 25%,transparent 25%,transparent 75%,#EadFcd 75%),
+      linear-gradient(45deg,#EadFcd 25%,#FBF3E6 25%,#FBF3E6 75%,#EadFcd 75%);
+    background-size:16px 16px;background-position:0 0,8px 8px;border:1px solid var(--line)}
+  .screen{padding:16px;border-radius:20px;background:#1d1d28;
+    border:4px solid #2B2A4C;box-shadow:inset 0 0 0 3px #3a3950, var(--shadow)}
+  .screen canvas{image-rendering:pixelated;border-radius:6px;display:block}
+  label.ctl{display:block;font-size:12px;color:var(--ink);margin:16px 0 6px;font-weight:800}
+  label.ctl .muted{color:var(--muted);font-weight:600}
+  input[type=range]{width:100%;-webkit-appearance:none;height:8px;border-radius:8px;
+    background:linear-gradient(90deg,var(--teal),var(--yellow));outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;
+    background:#fff;border:3px solid var(--coral);cursor:pointer;box-shadow:0 2px 5px rgba(0,0,0,.2)}
+  .seg{display:flex;gap:8px;margin-top:4px}
+  .seg button{flex:1;padding:9px;font-size:12px;box-shadow:none}
+  .seg button.on{background:var(--teal);color:#fff;box-shadow:0 3px 0 #0E8E82}
+  .seg button.on:active{transform:translateY(2px);box-shadow:0 1px 0 #0E8E82}
+  .seg button.off{background:#fff;color:var(--ink);border:2px solid var(--line);font-weight:700;box-shadow:none}
+  .swatch{width:38px;height:38px;border-radius:10px;border:2px solid var(--line);padding:0;cursor:pointer;box-shadow:none}
+  .hint{font-size:12.5px;color:#7d6f57;line-height:1.55;margin-top:16px;font-weight:600;
+    background:#FFF7E8;padding:12px 14px;border-radius:14px;border:1px solid #F3E4C6}
+  .hint b{color:var(--ink)}
+  .pill{display:inline-block;background:var(--teal);border-radius:999px;
+    padding:3px 11px;font-size:11px;color:#fff;margin-left:6px;font-weight:800;vertical-align:middle}
+  a.dl{display:block;text-align:center;margin-top:16px}
+  a.dl button{font-size:15px;padding:14px 18px;width:100%}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎵 Yoto Icon Maker <span class="pill">16×16 PNG</span></h1>
+  <p class="sub">Turn any picture into a Yoto-ready pixel icon — runs entirely on your Mac, nothing is uploaded.</p>
+
+  <div class="grid">
+    <!-- LEFT -->
+    <div class="card">
+      <div id="drop" class="drop">
+        <div style="font-size:34px">🖼️</div>
+        <div><b>Drop an image here</b> or click to choose</div>
+        <div style="font-size:12px">You can also paste (⌘V) an image you copied</div>
+      </div>
+      <div class="row">
+        <input id="url" type="text" placeholder="…or paste an image URL and press Load">
+        <button id="loadUrl" class="ghost">Load</button>
+      </div>
+
+      <div class="previews" style="margin-top:18px">
+        <div class="pv">
+          <div class="screen"><canvas id="big" width="192" height="192"></canvas></div>
+          <span>On the Yoto screen (preview)</span>
+        </div>
+        <div class="pv">
+          <canvas id="small" width="16" height="16" style="width:64px;height:64px"></canvas>
+          <span>Actual 16×16</span>
+        </div>
+      </div>
+      <a class="dl"><button id="save" disabled>⬇︎ Save icon as PNG</button></a>
+      <div class="hint">After saving, drag the PNG into your shared iCloud folder, then in the
+        Yoto app open your card → an icon slot → <b>My Icons → Upload Icon</b>.</div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="card">
+      <label class="ctl">Framing</label>
+      <div class="seg" id="fit">
+        <button data-v="fill" class="on">Fill (crop square)</button>
+        <button data-v="fit" class="off">Fit (whole image)</button>
+      </div>
+
+      <label class="ctl">Move ← → (horizontal)</label>
+      <input id="posx" type="range" min="-100" max="100" value="0">
+      <label class="ctl">Move ↑ ↓ (vertical)</label>
+      <input id="posy" type="range" min="-100" max="100" value="0">
+
+      <label class="ctl">Pixel style</label>
+      <div class="seg" id="mode">
+        <button data-v="smooth" class="on">Smooth</button>
+        <button data-v="blocky" class="off">Blocky</button>
+      </div>
+
+      <label class="ctl">Brightness <span id="bV" class="muted"></span></label>
+      <input id="bright" type="range" min="-60" max="60" value="0">
+      <label class="ctl">Contrast</label>
+      <input id="contrast" type="range" min="-40" max="80" value="10">
+      <label class="ctl">Color punch (saturation)</label>
+      <input id="sat" type="range" min="-100" max="120" value="25">
+
+      <label class="ctl">Lift blacks <span class="muted">(Yoto hides pure black)</span></label>
+      <input id="lift" type="range" min="0" max="90" value="36">
+
+      <label class="ctl">Transparent background</label>
+      <div class="seg" id="bg">
+        <button data-v="auto" class="on">Auto (corners)</button>
+        <button data-v="pick" class="off">Pick color</button>
+        <button data-v="none" class="off">Keep</button>
+      </div>
+      <div class="row" id="pickRow" style="display:none">
+        <input class="swatch" type="color" id="bgColor" value="#ffffff">
+        <span class="muted" style="font-size:12px">Color to erase</span>
+      </div>
+      <label class="ctl">Erase tolerance</label>
+      <input id="tol" type="range" min="0" max="120" value="48">
+
+      <button id="reset" class="ghost" style="width:100%;margin-top:16px">Reset adjustments</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+let srcImg = null;
+const state = {fit:'fill', mode:'smooth', bg:'auto'};
+
+// ---- segmented controls ----
+function seg(groupId, key){
+  const g = $(groupId);
+  g.addEventListener('click', e=>{
+    const b = e.target.closest('button'); if(!b) return;
+    [...g.children].forEach(c=>{c.className = c===b?'on':'off';});
+    state[key] = b.dataset.v;
+    if(groupId==='bg') $('pickRow').style.display = (state.bg==='pick')?'flex':'none';
+    render();
+  });
+}
+seg('fit','fit'); seg('mode','mode'); seg('bg','bg');
+
+['posx','posy','bright','contrast','sat','lift','tol','bgColor'].forEach(id=>{
+  $(id).addEventListener('input',render);
+});
+$('reset').onclick = ()=>{
+  $('posx').value=0;$('posy').value=0;
+  $('bright').value=0;$('contrast').value=10;$('sat').value=25;$('lift').value=36;$('tol').value=48;
+  render();
+};
+
+// ---- input handling ----
+const drop = $('drop');
+drop.onclick = ()=>{
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
+  inp.onchange=()=>inp.files[0]&&loadFile(inp.files[0]); inp.click();
+};
+['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('hot');}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('hot');}));
+drop.addEventListener('drop',e=>{
+  const f=[...e.dataTransfer.files].find(f=>f.type.startsWith('image'));
+  if(f) loadFile(f);
+  else{ const u=e.dataTransfer.getData('text'); if(u) loadURL(u); }
+});
+window.addEventListener('paste',e=>{
+  const it=[...e.clipboardData.items].find(i=>i.type.startsWith('image'));
+  if(it) loadFile(it.getAsFile());
+});
+$('loadUrl').onclick=()=>{ const u=$('url').value.trim(); if(u) loadURL(u); };
+
+function loadFile(file){
+  const r=new FileReader();
+  r.onload=()=>setImg(r.result);
+  r.readAsDataURL(file);
+}
+function loadURL(url){
+  const img=new Image(); img.crossOrigin='anonymous';
+  img.onload=()=>{ srcImg=img; render(); };
+  img.onerror=()=>alert("Couldn't load that URL (the site may block it). Easiest fix: drag the image off the webpage straight into the drop box, or save it and drop the file in.");
+  img.src=url;
+}
+function setImg(dataUrl){
+  const img=new Image();
+  img.onload=()=>{ srcImg=img; render(); };
+  img.src=dataUrl;
+}
+
+// ---- helpers ----
+function clamp(v){return v<0?0:v>255?255:v;}
+
+// ---- the render pipeline ----
+const work=document.createElement('canvas'); work.width=16; work.height=16;
+const wctx=work.getContext('2d');
+
+function render(){
+  if(!srcImg){return;}
+  wctx.clearRect(0,0,16,16);
+  wctx.imageSmoothingEnabled = (state.mode==='smooth');
+
+  // framing (with reposition)
+  const px=+$('posx').value/100, py=+$('posy').value/100; // -1..1
+  const iw=srcImg.width, ih=srcImg.height;
+  if(state.fit==='fill'){
+    const s=Math.min(iw,ih);
+    const slackX=iw-s, slackY=ih-s;
+    const sx=slackX/2 + px*slackX/2;
+    const sy=slackY/2 + py*slackY/2;
+    wctx.drawImage(srcImg,sx,sy,s,s,0,0,16,16);
+  }else{
+    const s=Math.min(16/iw,16/ih); const w=iw*s,h=ih*s;
+    const dx=(16-w)/2 + px*8;
+    const dy=(16-h)/2 + py*8;
+    wctx.drawImage(srcImg,0,0,iw,ih,dx,dy,w,h);
+  }
+
+  let img;
+  try{ img=wctx.getImageData(0,0,16,16); }
+  catch(err){ alert("That image is protected by the website (CORS) so it can't be edited here. Drag the actual image file in instead."); return; }
+  const d=img.data;
+
+  const bright=+$('bright').value;
+  const contrast=+$('contrast').value;
+  const cf=(259*(contrast+255))/(255*(259-contrast)); // contrast factor
+  const sat=+$('sat').value/100;
+  const lift=+$('lift').value;          // luminance floor 0..90
+  const tol=+$('tol').value;            // bg erase tolerance
+
+  // background reference color
+  let bgR=255,bgG=255,bgB=255;
+  if(state.bg==='auto'){
+    const cs=[[0,0],[15,0],[0,15],[15,15]]; let r=0,g=0,b=0;
+    cs.forEach(([x,y])=>{const i=(y*16+x)*4; r+=d[i];g+=d[i+1];b+=d[i+2];});
+    bgR=r/4;bgG=g/4;bgB=b/4;
+  }else if(state.bg==='pick'){
+    const h=$('bgColor').value; bgR=parseInt(h.substr(1,2),16);bgG=parseInt(h.substr(3,2),16);bgB=parseInt(h.substr(5,2),16);
+  }
+
+  for(let i=0;i<d.length;i+=4){
+    let r=d[i],g=d[i+1],b=d[i+2],a=d[i+3];
+
+    // transparency by color distance
+    if(state.bg!=='none' && a>0){
+      const dist=Math.sqrt((r-bgR)**2+(g-bgG)**2+(b-bgB)**2);
+      if(dist<=tol){ d[i+3]=0; continue; }
+    }
+    if(a===0) continue;
+
+    // brightness
+    r+=bright; g+=bright; b+=bright;
+    // contrast
+    r=cf*(r-128)+128; g=cf*(g-128)+128; b=cf*(b-128)+128;
+    // saturation
+    const lum=0.299*r+0.587*g+0.114*b;
+    r=lum+(r-lum)*(1+sat); g=lum+(g-lum)*(1+sat); b=lum+(b-lum)*(1+sat);
+    r=clamp(r);g=clamp(g);b=clamp(b);
+
+    // lift blacks so the Yoto screen shows the pixel
+    if(lift>0){
+      const L=0.299*r+0.587*g+0.114*b;
+      if(L<lift){
+        if(L<1){ r=g=b=lift; }
+        else{ const k=lift/L; r=clamp(r*k);g=clamp(g*k);b=clamp(b*k); }
+      }
+    }
+    d[i]=r;d[i+1]=g;d[i+2]=b;
+  }
+  wctx.putImageData(img,0,0);
+
+  // draw previews
+  const sm=$('small').getContext('2d'); sm.clearRect(0,0,16,16); sm.drawImage(work,0,0);
+  const big=$('big'); const bc=big.getContext('2d'); bc.imageSmoothingEnabled=false;
+  bc.clearRect(0,0,big.width,big.height); bc.drawImage(work,0,0,big.width,big.height);
+
+  $('save').disabled=false;
+}
+
+// ---- save ----
+$('save').onclick=()=>{
+  work.toBlob(b=>{
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(b);
+    a.download='yoto-icon.png';
+    a.click();
+  },'image/png');
+};
+</script>
+</body>
+</html>
